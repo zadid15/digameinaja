@@ -4,7 +4,7 @@ import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const API_KEY = "b13b3adc41f44643a5de48d6ade03315"; // Ganti dengan API Key dari RAWG.io
+const API_KEY = import.meta.env.VITE_RAWG_API_KEY; // Ganti dengan API Key dari RAWG.io
 const API_URL = "https://api.rawg.io/api/games";
 
 interface Game {
