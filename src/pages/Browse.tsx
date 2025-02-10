@@ -64,7 +64,7 @@ export default function Browse() {
 
         const delayDebounce = setTimeout(() => {
             fetchGames();
-        }, 0); // Dipercepat debounce-nya
+        }, 30); // Dipercepat debounce-nya
 
         return () => clearTimeout(delayDebounce);
     }, [searchQuery]);
