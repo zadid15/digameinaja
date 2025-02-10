@@ -7,7 +7,7 @@ interface Game {
     background_image: string;
     rating: number;
     genres: { name: string }[];
-    platforms: { platform: { name: string } }[];
+    platforms?: { platform: { name: string } }[]; // Pastikan optional (?)
 }
 
 const platformIcons: Record<string, ReactNode> = {
@@ -20,9 +20,9 @@ const platformIcons: Record<string, ReactNode> = {
 };
 
 export default function Card({ game }: { game: Game }) {
-    // Ambil nama unik dari platform
+    // Pastikan game.platforms tidak null sebelum map
     const uniquePlatforms = Array.from(
-        new Set(game.platforms.map((p) => p.platform.name))
+        new Set(game.platforms?.map((p) => p.platform.name) || [])
     );
 
     // Filter ikon hanya yang ada di daftar, jika tidak ada tampilkan globe sekali saja
@@ -53,7 +53,9 @@ export default function Card({ game }: { game: Game }) {
 
                 {/* Platform Icons */}
                 <div className="flex gap-2 mt-3">
-                    {platformIconsList.length > 0 ? platformIconsList : <FaGlobe className="text-gray-500" />}
+                    {platformIconsList.length > 0
+                        ? platformIconsList.map((icon, index) => <span key={index}>{icon}</span>)
+                        : <FaGlobe className="text-gray-500" />}
                 </div>
             </div>
         </div>
