@@ -1,50 +1,45 @@
-# React + TypeScript + Vite
+# 🎮 DIGAMEINAJA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A game discovery web application using the [RAWG API](https://rawg.io/apidocs), built with **React, TypeScript, and Tailwind CSS**.
 
-Currently, two official plugins are available:
+## 🚀 Features
+- 🔍 **Search Games** – Find games by name with a real-time search experience  
+- 📖 **Game Details** – View game information including rating, platform, genres, and release date  
+- 🎨 **Modern UI** – Clean and responsive design powered by Tailwind CSS  
+- 🚀 **Optimized Performance** – Uses `sessionStorage` for caching search results  
+- ⏳ **Loading State** – Provides smooth feedback when fetching data  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tech Stack
+- **Frontend:** React, TypeScript, Tailwind CSS  
+- **API:** [RAWG Video Games Database](https://rawg.io/apidocs)  
+- **State Management:** React Hooks (`useState`, `useEffect`)  
+- **Caching:** `sessionStorage`  
 
-## Expanding the ESLint configuration
+## 📸 Screenshots  
+### Homepage
+![Homepage](public/assets/images/readmephoto/homepage.png)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🔧 Installation  
+### 1️⃣ Clone the Repository  
+```sh
+git clone https://github.com/zadid15/digameinaja.git
+cd digameinaja
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+### 2️⃣ Install Dependencies  
+```sh
+npm install
 ```
+
+### 3️⃣ Set Up Environment Variables  
+Create a `.env` file in the root directory and add:  
+```sh
+VITE_RAWG_API_KEY=your_api_key_here
+```
+Replace `your_api_key_here` with your actual RAWG API key.
+
+### 4️⃣ Start the Development Server  
+```sh
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
