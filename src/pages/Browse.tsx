@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 const API_KEY = import.meta.env.VITE_RAWG_API_KEY; // Ganti dengan API Key dari RAWG.io
-const API_URL = "https://api.rawg.io/api/games";
+const API_URL = import.meta.env.VITE_RAWG_API_URL + "/games";
 
 interface Game {
     id: number;
