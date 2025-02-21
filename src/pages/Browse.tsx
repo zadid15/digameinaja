@@ -3,6 +3,7 @@ import axios from "axios";
 import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
 
 const API_KEY = import.meta.env.VITE_RAWG_API_KEY; // Ganti dengan API Key dari RAWG.io
 const API_URL = import.meta.env.VITE_RAWG_API_URL + "/games";
@@ -128,7 +129,11 @@ export default function Browse() {
 
                     {/* Game List */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                        {games.length > 0 && games.map((game) => <Card key={game.id} game={game} />)}
+                        {games.length > 0 && games.map((game) =>
+                            <Link key={game.id} to={`games/${game.id}`}>
+                                <Card key={game.id} game={game} />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>
