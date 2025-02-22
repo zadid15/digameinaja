@@ -101,8 +101,6 @@ export default function DetailsGame() {
                     params: { key: API_KEY },
                 });
 
-                console.log(response.data); // Cek struktur data yang diterima
-
                 setGame(response.data);
 
                 // Set Developers
@@ -130,22 +128,6 @@ export default function DetailsGame() {
 
     if (loading) return <p className="text-center text-gray-400 mt-6">Loading...</p>;
     if (!game) return <p className="text-center text-gray-400 mt-6">Game not found.</p>;
-
-    const parseRequirement = (
-        text: string | undefined,
-        key: string,
-        regex: RegExp,
-        suffix: string = "",
-        maxLength: number = 50 // Batasi maksimal 50 karakter
-    ) => {
-        if (!text) return "Data tidak tersedia";
-        const match = text.match(regex);
-        if (!match) return "Data tidak tersedia";
-
-        const result = match[1].trim().replace(new RegExp(`^${key}:\\s*`, "i"), "") + suffix;
-
-        return result.length > maxLength ? result.substring(0, maxLength) + "..." : result;
-    };
 
     return (
         <>
@@ -219,36 +201,44 @@ export default function DetailsGame() {
             </div>
 
             <div className="mx-auto px-4 sm:px-6 lg:px-30 mt-10 sm:mt-8 lg:mt-12">
-                <h3 className="text-xl xl:text-2xl font-semibold text-gray-200">Minimum System Requirements</h3>
+                <h3 className="text-xl xl:text-2xl font-semibold text-gray-200">Minimum System Requirements ( Windows )</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     <div>
                         <h3 className="font-semibold text-gray-400 text-md xl:text-xl">OS</h3>
                         <p className="text-gray-300 text-sm xl:text-lg">
-                            {parseRequirement(pcPlatform?.requirements?.minimum, "OS", /OS:\s*(.+)/i)}
+                            {(pcPlatform as PcPlatform).requirements?.minimum
+                                ?.match(/OS:\s*([^,]+)/i)?.[1]
+                                ?.trim() || "Data tidak tersedia"}
                         </p>
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Processor</h3>
                         <p className="text-gray-300 text-sm xl:text-lg">
-                            {parseRequirement(pcPlatform?.requirements?.minimum, "Processor", /Processor:\s*(.+)/i)}
+                            {(pcPlatform as PcPlatform).requirements?.minimum
+                                ?.match(/Processor:\s*([\w\s-]+)@/i)?.[1]
+                                ?.trim() || "Data tidak tersedia"}
                         </p>
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Memory</h3>
                         <p className="text-gray-300 text-sm xl:text-lg">
-                            {parseRequirement(pcPlatform?.requirements?.minimum, "Memory", /Memory:\s*(.+)/i)}
+                            {(pcPlatform as PcPlatform).requirements?.minimum
+                                ?.match(/Memory:\s*([\d]+(?:\s*GB|\s*MB))/i)?.[1] || "Data tidak tersedia"}
                         </p>
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Graphics</h3>
                         <p className="text-gray-300 text-sm xl:text-lg">
-                            {parseRequirement(pcPlatform?.requirements?.minimum, "Graphics", /Graphics:\s*(.+)/i)}
+                            {(pcPlatform as PcPlatform).requirements?.minimum
+                                ?.match(/Graphics:\s*([^/]+)/i)?.[1]?.trim() || "Data tidak tersedia"}
                         </p>
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Storage</h3>
                         <p className="text-gray-300 text-sm xl:text-lg">
-                            {parseRequirement(pcPlatform?.requirements?.minimum, "Storage", /Storage:\s*(.+)/i, " GB")}
+                            {(pcPlatform as PcPlatform).requirements?.minimum
+                                ?.match(/Storage:\s*([\dA-Za-z\s]+)GB/i)?.[1]
+                                ?.trim() + " GB" || "Data tidak tersedia"}
                         </p>
                     </div>
                 </div>
