@@ -73,7 +73,7 @@ export default function Browse() {
         }, 500);
 
         return () => clearTimeout(delayDebounce);
-    }, [searchQuery, page]);
+    }, [searchQuery, page, hasMore]);
 
     const gameCards = useMemo(() => {
         return games.map((game) => (
