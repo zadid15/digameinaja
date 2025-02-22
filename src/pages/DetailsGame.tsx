@@ -3,18 +3,17 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { FaWindows, FaPlaystation, FaXbox } from "react-icons/fa";
-import { SiPlaystation3, SiPlaystation4, SiPlaystation5 } from "react-icons/si";
+import { ReactNode } from "react";
+import { FaWindows, FaPlaystation, FaXbox, FaApple, FaAndroid, FaLinux } from "react-icons/fa";
 
-const platformIcons = {
-    "PC": <FaWindows />,
-    "PlayStation 5": <SiPlaystation5 />,
-    "PlayStation 4": <SiPlaystation4 />,
-    "PlayStation 3": <SiPlaystation3 />,
-    "PlayStation": <FaPlaystation />,
-    "Xbox One": <FaXbox />,
-    "Xbox Series S/X": <FaXbox />,
-    "Xbox 360": <FaXbox />
+
+const platformIcons: Record<string, ReactNode> = {
+    "PC": <FaWindows className="text-blue-400" />,
+    "PlayStation": <FaPlaystation className="text-blue-500" />,
+    "Xbox": <FaXbox className="text-green-500" />,
+    "macOS": <FaApple className="text-gray-300" />,
+    "Android": <FaAndroid className="text-green-400" />,
+    "Linux": <FaLinux className="text-yellow-400" />,
 };
 const API_KEY = import.meta.env.VITE_RAWG_API_KEY;
 const API_URL = "https://api.rawg.io/api/games";
@@ -26,7 +25,7 @@ interface GameDetail {
     description_raw: string;
     rating: number;
     released: string;
-    platforms: { platform: { name: string } }[];
+    platforms: { platform: { id: number; name: string } }[];
     genres: { name: string }[];
     metacritic?: number;
 }
@@ -61,12 +60,16 @@ export default function DetailsGame() {
                     params: { key: API_KEY },
                 });
 
-                // Filter platform yang bernama "PC"
+                // Cari platform PC
                 const pcData = response.data.platforms.find(
                     (platform: { platform: { name: string } }) => platform.platform.name === "PC"
-                );
+                ) || { platform: {}, requirements: {} }; // Fallback jika tidak ditemukan
 
-                // Simpan platform PC beserta persyaratan sistemnya
+                // Pastikan `requirements` selalu ada
+                if (!pcData.requirements) {
+                    pcData.requirements = { minimum: "Data tidak tersedia" };
+                }
+
                 setPcPlatform(pcData);
             } catch (error) {
                 console.error("Error fetching game details:", error);
@@ -128,6 +131,22 @@ export default function DetailsGame() {
     if (loading) return <p className="text-center text-gray-400 mt-6">Loading...</p>;
     if (!game) return <p className="text-center text-gray-400 mt-6">Game not found.</p>;
 
+    const parseRequirement = (
+        text: string | undefined,
+        key: string,
+        regex: RegExp,
+        suffix: string = "",
+        maxLength: number = 50 // Batasi maksimal 50 karakter
+    ) => {
+        if (!text) return "Data tidak tersedia";
+        const match = text.match(regex);
+        if (!match) return "Data tidak tersedia";
+
+        const result = match[1].trim().replace(new RegExp(`^${key}:\\s*`, "i"), "") + suffix;
+
+        return result.length > maxLength ? result.substring(0, maxLength) + "..." : result;
+    };
+
     return (
         <>
             <Navbar />
@@ -144,58 +163,50 @@ export default function DetailsGame() {
                     {/* Deskripsi yang mengalir mengelilingi gambar */}
                     <div className="w-full mt-4 sm:mt-0">
                         <h2 className="text-2xl xl:text-3xl font-semibold text-gray-200">About {game.name}</h2>
-                        <p className="text-gray-400 text-md leading-[1.6] xl:text-sm mt-2">{game.description_raw}</p>
+                        <p className="text-gray-400 text-md leading-[1.6] xl:text-md mt-2">{game.description_raw}</p>
                     </div>
                 </div>
             </div>
             <div className="mx-auto px-4 sm:px-6 lg:px-30 mt-10 sm:mt-8 lg:mt-12">
-                <h3 className="text-xl font-semibold text-gray-200">Additional Information</h3>
+                <h3 className="text-xl xl:text-2xl font-semibold text-gray-200">Additional Information</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Title</h3>
-                        <p className="text-gray-300 text-md">{game.name}</p>
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Title</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">{game.name}</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Developer</h3>
-                        <p className="text-gray-300 text-md">{developers.length > 0 ? developers[0] : "Unknown"}</p>
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Developer</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">{developers.length > 0 ? developers[0] : "Unknown"}</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Publisher</h3>
-                        <p className="text-gray-300 text-md">{publishers.length > 0 ? publishers[0] : "Unknown"}</p>
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Publisher</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">{publishers.length > 0 ? publishers[0] : "Unknown"}</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Release Date</h3>
-                        <p className="text-gray-300 text-md">{game.released}</p>
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Release Date</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">{game.released}</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Genre</h3>
-                        <p className="text-gray-300 text-md">{game.genres.length > 0 ? game.genres[0].name : "Unknown"}</p>
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Genre</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">{game.genres.length > 0 ? game.genres[0].name : "Unknown"}</p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Platform</h3>
-                        <div className="flex gap-2 text-gray-300 text-md">
-                            {(() => {
-                                const seenXbox = new Set(); // Untuk melacak apakah Xbox sudah ditampilkan
-                                return game.platforms.map((platform) => {
-                                    const platformName = platform.platform.name;
-                                    if (platformName.toLowerCase().includes("xbox")) {
-                                        if (seenXbox.has("xbox")) return null; // Jika Xbox sudah ada, skip
-                                        seenXbox.add("xbox");
-                                    }
-                                    return (
-                                        <span key={platformName} className="flex items-center gap-1">
-                                            {platformIcons[platformName as keyof typeof platformIcons] || "🎮"}
-                                        </span>
-                                    );
-                                });
-                            })()}
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Platform</h3>
+                        <div className="flex gap-2 text-gray-300 text-lg">
+                            <div className="flex gap-2 text-gray-300 text-2xl mt-2">
+                                {game.platforms.map(({ platform }) => (
+                                    <div key={platform.id} className="flex items-center gap-1">
+                                        {platformIcons[platform.name] ?? null} {/* Hanya tampilkan ikon jika tersedia */}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="mx-auto px-4 sm:px-6 lg:px-30 mt-10 sm:mt-8 lg:mt-12">
-                <h3 className="text-xl font-semibold text-gray-200">Screenshots of {game.name}</h3>
+                <h3 className="text-xl xl:text-2xl font-semibold text-gray-200">Screenshots of {game.name}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {screenshots.length > 0 ? (
                         screenshots.map((url, index) => (
@@ -208,44 +219,36 @@ export default function DetailsGame() {
             </div>
 
             <div className="mx-auto px-4 sm:px-6 lg:px-30 mt-10 sm:mt-8 lg:mt-12">
-                <h3 className="text-xl font-semibold text-gray-200">Minimum System Requirements</h3>
+                <h3 className="text-xl xl:text-2xl font-semibold text-gray-200">Minimum System Requirements</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">OS</h3>
-                        <p className="text-gray-300 text-sm">
-                            {(pcPlatform as PcPlatform).requirements?.minimum
-                                ?.match(/OS:\s*([^,]+)/i)?.[1]
-                                ?.trim() || "Data tidak tersedia"}
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">OS</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">
+                            {parseRequirement(pcPlatform?.requirements?.minimum, "OS", /OS:\s*(.+)/i)}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Processor</h3>
-                        <p className="text-gray-300 text-sm">
-                            {(pcPlatform as PcPlatform).requirements?.minimum
-                                ?.match(/Processor:\s*([\w\s-]+)@/i)?.[1]
-                                ?.trim() || "Data tidak tersedia"}
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Processor</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">
+                            {parseRequirement(pcPlatform?.requirements?.minimum, "Processor", /Processor:\s*(.+)/i)}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Memory</h3>
-                        <p className="text-gray-300 text-sm">
-                            {(pcPlatform as PcPlatform).requirements?.minimum
-                                ?.match(/Memory:\s*([\d]+(?:\s*GB|\s*MB))/i)?.[1] || "Data tidak tersedia"}
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Memory</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">
+                            {parseRequirement(pcPlatform?.requirements?.minimum, "Memory", /Memory:\s*(.+)/i)}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Graphics</h3>
-                        <p className="text-gray-300 text-sm">
-                            {(pcPlatform as PcPlatform).requirements?.minimum
-                                ?.match(/Graphics:\s*([^/]+)/i)?.[1]?.trim() || "Data tidak tersedia"}
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Graphics</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">
+                            {parseRequirement(pcPlatform?.requirements?.minimum, "Graphics", /Graphics:\s*(.+)/i)}
                         </p>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-400 text-md">Storage</h3>
-                        <p className="text-gray-300 text-sm">
-                            {(pcPlatform as PcPlatform).requirements?.minimum
-                                ?.match(/Storage:\s*([\dA-Za-z\s]+)GB/i)?.[1]
-                                ?.trim() + " GB" || "Data tidak tersedia"}
+                        <h3 className="font-semibold text-gray-400 text-md xl:text-xl">Storage</h3>
+                        <p className="text-gray-300 text-sm xl:text-lg">
+                            {parseRequirement(pcPlatform?.requirements?.minimum, "Storage", /Storage:\s*(.+)/i, " GB")}
                         </p>
                     </div>
                 </div>
