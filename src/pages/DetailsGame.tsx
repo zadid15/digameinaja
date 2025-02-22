@@ -15,7 +15,7 @@ const platformIcons: Record<string, ReactNode> = {
     "Linux": <FaLinux className="text-yellow-400" />,
 };
 const API_KEY = import.meta.env.VITE_RAWG_API_KEY;
-const API_URL = "https://api.rawg.io/api/games";
+const API_URL = import.meta.env.VITE_RAWG_API_URL + "/games";
 
 interface GameDetail {
     id: number;
@@ -53,76 +53,36 @@ export default function DetailsGame() {
     const [publishers, setPublishers] = useState<string[]>([]);
 
     useEffect(() => {
-        const fetchGameDetails = async () => {
+        const fetchData = async () => {
+            setLoading(true);
             try {
-                const response = await axios.get(`${API_URL}/${id}`, {
-                    params: { key: API_KEY },
-                });
+                const [gameRes, screenshotsRes] = await Promise.all([
+                    axios.get(`${API_URL}/${id}`, { params: { key: API_KEY } }),
+                    axios.get(`${API_URL}/${id}/screenshots`, { params: { key: API_KEY } }),
+                ]);
 
-                // Cari platform PC
-                const pcData = response.data.platforms.find(
-                    (platform: { platform: { name: string } }) => platform.platform.name === "PC"
-                ) || { platform: {}, requirements: {} }; // Fallback jika tidak ditemukan
+                const gameData = gameRes.data;
 
-                // Pastikan `requirements` selalu ada
-                if (!pcData.requirements) {
-                    pcData.requirements = { minimum: "Data tidak tersedia" };
-                }
+                // Set data utama
+                setGame(gameData);
+                setScreenshots(screenshotsRes.data.results.map((s: { image: string }) => s.image));
+
+                // Cari platform PC dan requirements
+                const pcData = gameData.platforms.find(
+                    (p: { platform: { name: string } }) => p.platform.name === "PC"
+                ) || { platform: {}, requirements: { minimum: "Data tidak tersedia" } };
 
                 setPcPlatform(pcData);
+                setDevelopers(gameData.developers?.map((dev: Developer) => dev.name) || []);
+                setPublishers(gameData.publishers?.map((pub: Publisher) => pub.name) || []);
             } catch (error) {
-                console.error("Error fetching game details:", error);
-            }
-        };
-
-        fetchGameDetails();
-    }, [id]);
-
-    useEffect(() => {
-        const fetchScreenshots = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/${id}/screenshots`, {
-                    params: { key: API_KEY },
-                });
-                setScreenshots(response.data.results.map((screenshot: { image: string }) => screenshot.image));
-            } catch (error) {
-                console.error("Error fetching screenshots:", error);
-            }
-        };
-
-        fetchScreenshots();
-    }, [id]);
-
-    useEffect(() => {
-        const fetchGameDetail = async () => {
-            try {
-                const response = await axios.get(`${API_URL}/${id}`, {
-                    params: { key: API_KEY },
-                });
-
-                setGame(response.data);
-
-                // Set Developers
-                if (Array.isArray(response.data.developers)) {
-                    setDevelopers(response.data.developers.map((dev: Developer) => dev.name));
-                } else {
-                    setDevelopers([]);
-                }
-
-                // **Set Publishers**
-                if (Array.isArray(response.data.publishers)) {
-                    setPublishers(response.data.publishers.map((pub: Publisher) => pub.name));
-                } else {
-                    setPublishers([]);
-                }
-            } catch (error) {
-                console.error("Error fetching game details:", error);
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchGameDetail();
+        fetchData();
     }, [id]);
 
     return (
@@ -134,7 +94,7 @@ export default function DetailsGame() {
                         {/* Back Button di Mobile, Judul di Desktop */}
                         <button
                             onClick={() => window.history.back()}
-                            className="md:hidden text-white text-lg font-bold p-2 rounded hover:bg-gray-700 transition"
+                            className="md:hidden text-white text-2xl font-bold p-2 rounded hover:bg-gray-700 transition"
                         >
                             ←
                         </button>
@@ -175,6 +135,7 @@ export default function DetailsGame() {
                                         src={game.background_image}
                                         alt={`Image of ${game.name}`}
                                         className="w-full sm:w-1/3 h-auto object-cover sm:mr-6 float-left mb-4 sm:mb-0 rounded-lg"
+                                        loading="lazy"
                                     />
 
                                     {/* Deskripsi yang mengalir mengelilingi gambar */}
@@ -227,7 +188,7 @@ export default function DetailsGame() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                                     {screenshots.length > 0 ? (
                                         screenshots.map((url, index) => (
-                                            <img key={index} src={url} alt={`Screenshot ${index + 1}`} className="rounded-lg" />
+                                            <img key={index} src={url} alt={`Screenshot ${index + 1}`} className="rounded-lg" loading="lazy" />
                                         ))
                                     ) : (
                                         <p className="text-gray-400">No screenshots available.</p>
