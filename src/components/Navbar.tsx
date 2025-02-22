@@ -27,7 +27,7 @@ export default function Navbar() {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-[50px] items-center">
-                        <a href="#" className="text-white hover:text-[#6EB45A]">Home</a>
+                        <a href="/" className="text-white hover:text-[#6EB45A]">Home</a>
                         <a href="#" className="text-white hover:text-[#6EB45A]">Popular</a>
                         <a href="#" className="text-white hover:text-[#6EB45A]">Liked Games</a>
                     </div>
@@ -37,7 +37,7 @@ export default function Navbar() {
             {/* Menu Dropdown untuk Mobile */}
             {isOpen && (
                 <div className="md:hidden bg-[#3D3D3D] py-2">
-                    <a href="#" className="block text-white px-4 py-2 hover:bg-gray-700">Home</a>
+                    <a href="/" className="block text-white px-4 py-2 hover:bg-gray-700">Home</a>
                     <a href="#" className="block text-white px-4 py-2 hover:bg-gray-700">Popular</a>
                     <a href="#" className="block text-white px-4 py-2 hover:bg-gray-700">Liked Games</a>
                 </div>

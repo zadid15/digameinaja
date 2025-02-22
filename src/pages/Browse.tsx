@@ -73,8 +73,7 @@ export default function Browse() {
     return (
         <div className="flex flex-col min-h-screen">
             <Navbar />
-
-            <div className="flex-grow">
+            <div className="flex-grow mt-16">
                 {/* Hero Section */}
                 <div className="bg-[url('/assets/images/banner/hero.jpg')] bg-no-repeat bg-cover bg-center w-full">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -137,10 +136,7 @@ export default function Browse() {
                     </div>
                 </div>
             </div>
-
             <Footer />
         </div>
-
     );
-
 }
