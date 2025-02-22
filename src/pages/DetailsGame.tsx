@@ -162,9 +162,9 @@ export default function DetailsGame() {
             <div className="flex flex-col min-h-screen">
                 <div className="flex-grow mt-20 lg:mt-18 xl:mt-15">
                     {loading ? (
-                        <p className="text-center text-gray-400 mt-6">Loading...</p>
+                        <p className="text-center text-gray-400 mt-15">Loading...</p>
                     ) : !game ? (
-                        <p className="text-center text-gray-400 mt-6">Game not found.</p>
+                        <p className="text-center text-gray-400 mt-15">Game not found.</p>
                     ) : (
                         <>
                             <div className="mx-auto px-4 sm:px-6 lg:px-30 mt-6 sm:mt-8 lg:mt-12 xl:mt-16 ">
