@@ -12,9 +12,9 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
                     {/* Logo Tulisan */}
-                    <button onClick={() => window.history.back()} className="text-xl font-bold text-white">
+                    <a href="#" className="text-xl font-bold text-white">
                         DIGAMEIN<span className="text-[#6EB45A]">AJA</span>
-                    </button>
+                    </a>
 
                     {/* Hamburger Icon untuk Mobile */}
                     <div className="md:hidden">
@@ -27,7 +27,7 @@ export default function Navbar() {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-[50px] items-center">
-                        <button onClick={() => window.history.back()} className="text-white hover:text-[#6EB45A]">Home</button>
+                        <a href="#" className="text-white hover:text-[#6EB45A]">Home</a>
                         <a href="#" className="text-white hover:text-[#6EB45A]">Popular</a>
                         <a href="#" className="text-white hover:text-[#6EB45A]">Liked Games</a>
                     </div>
@@ -37,7 +37,7 @@ export default function Navbar() {
             {/* Menu Dropdown untuk Mobile */}
             {isOpen && (
                 <div className="md:hidden bg-[#3D3D3D] py-2">
-                    <button onClick={() => window.history.back()} className="block text-white px-4 py-2 hover:bg-gray-700">Home</button>
+                    <a href="#" className="block text-white px-4 py-2 hover:bg-gray-700">Home</a>
                     <a href="#" className="block text-white px-4 py-2 hover:bg-gray-700">Popular</a>
                     <a href="#" className="block text-white px-4 py-2 hover:bg-gray-700">Liked Games</a>
                 </div>

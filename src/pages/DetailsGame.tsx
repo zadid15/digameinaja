@@ -94,7 +94,7 @@ export default function DetailsGame() {
                         {/* Back Button di Mobile, Judul di Desktop */}
                         <button
                             onClick={() => window.history.back()}
-                            className="md:hidden text-white text-2xl font-bold p-2 rounded hover:bg-gray-700 transition"
+                            className="cursor-pointer md:hidden text-white text-2xl font-bold p-2 rounded hover:bg-gray-700 transition"
                         >
                             ←
                         </button>
@@ -105,9 +105,9 @@ export default function DetailsGame() {
 
                         {/* Desktop Menu */}
                         <div className="hidden md:flex space-x-[50px] items-center">
-                            <a href="#" className="text-white hover:text-[#6EB45A]">
+                            <button onClick={() => window.history.back()} className="cursor-pointer text-white hover:text-[#6EB45A]">
                                 Home
-                            </a>
+                            </button>
                             <a href="#" className="text-white hover:text-[#6EB45A]">
                                 Popular
                             </a>
